@@ -1,3 +1,4 @@
+#!/bin/bash
 echo -n "Select language / Выбери язык
 R - Русский / Russian
 e - English / Английский
