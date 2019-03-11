@@ -1,0 +1,62 @@
+echo -n "Select language / Выбери язык
+R - Русский / Russian
+e - English / Английский
+Your choose / Твой выбор: "
+read lang22
+case "$lang22" in
+e|E) echo "English language choosed."
+echo "Not working..."
+;;
+*) echo -ne "Выбран русский язык.\r"
+sleep 1
+echo -ne "Сейчас пойдет установка библиотек...
+Если спросит пароль от su, вводи смело.
+Если параноик - уж исходный код посмотри хоть!\r"
+sleep 5
+echo -ne "Установка последних обновлений ядра и системы...\r"
+sleep 1
+sudo apt-get update && sudo apt-get dist-upgrade
+echo -ne "Установка библиотек для сборки...\r"
+sleep 1
+sudo apt-get install git-core gnupg flex bison gperf build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc unzip bc ccache git imagemagick lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libssl-dev libwxgtk3.0-dev libxml2 lzop pngcrush rsync schedtool squashfs-tools openjdk-8-jdk p7zip-full meld brotli qt4-qmake qt5-qmake android-tools-adb android-tools-fastboot python-networkx python-pip texinfo maven
+echo -ne "Установка repo...\r"
+sleep 1
+mkdir ~/bin && PATH=~/bin:$PATH && curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo && chmod a+x ~/bin/repo
+echo -n "Твоя почта (зарегестрированная на GitHub.com): "
+read gitemail
+echo -n "Твой никнейм (зарегестрированный на GitHub.com): "
+read gitname
+sleep 1
+echo "Даем твои данные git..."
+git config --global user.name "$gitname" && git config --global user.email "$gitemail"
+sleep 1
+echo "Устанавливаем для repo манифест..."
+cd /home/$USER/ && mkdir lineage_lazybuild
+cd /home/$USER/lineage_lazybuild && repo init -u git://github.com/iq4404/manifest-los14
+echo "Важный момент: скачивание исходников...
+Будет сильно лагать интернет и компьютер!"
+echo "Быть Многословным или Тихим? (м/Т (русские))"
+read repomode
+сase "$repomode" in
+м|М) variables=""
+;;
+т|Т) variables="-q"
+;;
+esac
+echo "Скачиваем исходники..."
+cd /home/$USER/lineage_lazybuild && repo sync "$variables"
+echo "Исходники скачаны!"
+echo "Подготовка ко сборке..."
+export LC_ALL=C
+cd /home/$USER/lineage_lazybuild/ && . build/envsetup.sh
+сd /home/$USER/lineage_lazybuild/ && lunch lineage_IQ4404-userdebug
+echo "Сборка начинается..."
+mka bacon
+echo ""
+echo ""
+echo "Готово! Твой файл прошивки: lineage_IQ4404***.zip"
+echo "Для того, чтобы его найти иди по этому пути: домашняя папка пользователя/lineage_lazybuild/out/target/IQ4404"
+exit 0
+echo
+;;
+esac
